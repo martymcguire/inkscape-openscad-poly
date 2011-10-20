@@ -12,4 +12,6 @@ class Path(Entity):
 
 	def make_poly(self,context):
 		"Emit polygon dict with id, points, paths"
-		context.add_poly(self.id, self.points, self.paths)
+		context.add_poly(self.id,
+                     [[round(n,5) for n in p] for p in self.points],
+                     self.paths)
