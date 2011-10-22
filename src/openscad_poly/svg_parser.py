@@ -151,7 +151,7 @@ class SvgEllipse(SvgPath):
     rx = float(node.get('rx','0'))
     ry = float(node.get('ry','0'))
     SvgPath.load(self,self.make_ellipse_path(rx,ry,node), mat)
-  def make_ellipse_path(rx, ry, node):
+  def make_ellipse_path(self, rx, ry, node):
     if rx == 0 or ry == 0:
       return None
     cx = float(node.get('cx','0'))
@@ -163,7 +163,7 @@ class SvgEllipse(SvgPath):
       '0 1 0 %f, %f ' % (x2,cy) + \
       'A %f,%f ' % (rx,ry) + \
       '0 1 0 %f,%f' % (x1,cy)
-    newpath = new_path_from_node(node)
+    newpath = self.new_path_from_node(node)
     newpath.set('d',d)
     return newpath
   
