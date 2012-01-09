@@ -1,6 +1,10 @@
 from math import *
 import sys
 
+class pfloat(float):
+    def __repr__(self):
+      return "%0.3f" % self
+
 class OSCADPolyContext:
     def __init__(self, file):
       self.file = file
@@ -17,5 +21,5 @@ class OSCADPolyContext:
         print "    );}"
 
     def add_poly(self, id, points, paths):
-      self.polygons.append({ 'id': id, 'points':points, 'paths':paths})
-
+      newpoints = [[pfloat(x), pfloat(y)] for x, y in points]
+      self.polygons.append({ 'id': id, 'points':newpoints, 'paths':paths})
