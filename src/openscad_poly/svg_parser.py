@@ -119,7 +119,7 @@ class SvgRect(SvgPath):
 
 class SvgLine(SvgPath):
   def load(self, node, mat):
-    newpath = new_path_from_node(node)
+    newpath = self.new_path_from_node(node)
     x1 = float(node.get('x1'))
     y1 = float(node.get('y1'))
     x2 = float(node.get('x2'))
@@ -132,7 +132,7 @@ class SvgLine(SvgPath):
 
 class SvgPolyLine(SvgPath):
   def load(self, node, mat):
-    newpath = new_path_from_node(node)
+    newpath = self.new_path_from_node(node)
     pl = node.get('points','').strip()
     if pl == '':
       return
