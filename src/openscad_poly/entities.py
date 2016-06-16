@@ -3,8 +3,7 @@ class Entity(object):
         pass
 
     def make_poly(self, context):
-        #raise NotImplementedError()
-        return "NIE"
+        raise NotImplementedError()
 
 class Path(Entity):
     def __init__(self):
@@ -15,10 +14,12 @@ class Path(Entity):
         self.paths    = []
 
     def __str__(self):
-        return "Polyline consisting of %d segments." % len(self.segments)
+        return "Polyline consisting of {} segments.".format(len(self.segments))
 
     def make_poly(self, context):
-        """Emit polygon dict with id, points, paths"""
+        """
+        Emit polygon dict with id, points, paths
+        """
         context.add_poly(self.id,
                          [[round(n, 5) for n in p] for p in self.points],
                          self.paths)
