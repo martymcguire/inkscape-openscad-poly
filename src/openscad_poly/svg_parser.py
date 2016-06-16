@@ -218,13 +218,17 @@ class SvgParser(object):
         self.entities = []
         self.svgWidth = 0.0
         self.svgHeight = 0.0
+        self.widthFactor  = 1.0
+        self.heightFactor = 1.0
 
-    def get_length(self, name, default = 354):
+    def get_length(self, name, default = 354.0):
         """
         Get the <svg> attribute with name "name" and default value "default"
-        Parse the attribute into a value and associated units.  Then, accept
+        Parse the attribute into a value and associated units. Then, accept
         no units (''), units of pixels ('px'), units of millimeter ('mm'),
         and units of percentage ('%').
+
+        return length and factor for the named dimension
         """
 
         string = self.svg.get( name )
@@ -234,26 +238,45 @@ class SvgParser(object):
             if not v:
                 # Couldn't parse the value
                 return None
+
             elif ( u == '' ) or ( u == 'px' ):
-                return v / default * 100.0
+                return [
+                    v / default * 100.0,
+                    100.0 / default
+                ]
+
             elif u == 'mm':
-                return v
+                return [
+                    v,
+                    100.0 / default
+                ]
+
             elif u == '%':
-                return v
+                # we do not know how big the viewport in pixels is (without iterating over every path TODO).
+                # So we can't deliver the length and set it to "0" instead, so viewport starts at 0,0 in OpenSCAD
+                return [
+                    0,
+                    v / 100.0
+                ]
+
             else:
                 # Unsupported units
                 return None
         else:
-            # No width specified; assume the default value
-            return float( default )
+            # Not specified; assume the default value
+            return [
+                default,
+                100.0 / default
+            ]
 
     def parse(self):
-        self.svgWidth = self.get_length('width', 354)
-        self.svgHeight = self.get_length('height', 354)
+        [self.svgWidth,   self.widthFactor] = self.get_length('width')
+        [self.svgHeight, self.heightFactor] = self.get_length('height')
+
         self.recursively_traverse_svg(self.svg,
             [
-                [100.0 / 354,              0.0, -(self.svgWidth/2.0)],
-                [            0.0, -100.0 / 354, (self.svgHeight/2.0)]
+                [self.widthFactor,               0.0, -(self.svgWidth/2.0)],
+                [            0.0, -self.heightFactor, (self.svgHeight/2.0)]
             ])
 
     def recursively_traverse_svg(self, node_list,
