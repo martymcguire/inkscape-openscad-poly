@@ -7,7 +7,8 @@ def parse_length_with_units(string):
     """
     Parse an SVG value which may or may not have units attached
     This version is greatly simplified in that it only allows: no units,
-    units of px, and units of %.  Everything else, it returns None for.
+    units of px, units of mm, and units of %.  Everything else,
+    it returns None for.
     There is a more general routine to consider in scour.py if more
     generality is ever needed.
     """
@@ -15,6 +16,9 @@ def parse_length_with_units(string):
     u = 'px'
     s = string.strip()
     if s[-2:] == 'px':
+        s = s[:-2]
+    elif s[-2:] == 'mm':
+        u = 'mm'
         s = s[:-2]
     elif s[-1:] == '%':
         u = '%'
@@ -72,6 +76,7 @@ class SvgIgnoredEntity(entities.Path):
         return "Ignored '%s' tag" % self.tag
 
     def make_poly(self, context):
+        # Entity should be ignored, so return nothing
         return
 
 class SvgPath(entities.Path):
@@ -213,22 +218,27 @@ class SvgParser(object):
         self.svgWidth = 0.0
         self.svgHeight = 0.0
 
-    def get_length(self, name, default):
+    def get_length(self, name, default = 354):
         """
         Get the <svg> attribute with name "name" and default value "default"
         Parse the attribute into a value and associated units.  Then, accept
-        no units (''), units of pixels ('px'), and units of percentage ('%').
+        no units (''), units of pixels ('px'), units of millimeter ('mm'),
+        and units of percentage ('%').
         """
+
         string = self.svg.get( name )
+
         if string:
             v, u = parse_length_with_units(string)
             if not v:
                 # Couldn't parse the value
                 return None
             elif ( u == '' ) or ( u == 'px' ):
+                return v / default * 100.0
+            elif u == 'mm':
                 return v
             elif u == '%':
-                return float( default ) * v / 100.0
+                return v
             else:
                 # Unsupported units
                 return None
@@ -237,12 +247,14 @@ class SvgParser(object):
             return float( default )
 
     def parse(self):
-        # 0.28222 scale determined by comparing pixels-per-mm in a default Inkscape file.
-        self.svgWidth = self.get_length('width', 354) * 0.28222
-        self.svgHeight = self.get_length('height', 354) * 0.28222
-        self.recursively_traverse_svg(self.svg, [[0.28222, 0.0, -(self.svgWidth / 2.0)], [0.0, -0.28222, (self.svgHeight / 2.0)]])
+        self.svgWidth = self.get_length('width', 354)
+        self.svgHeight = self.get_length('height', 354)
+        self.recursively_traverse_svg(self.svg,
+            [
+                [100.0 / 354,              0.0, -(self.svgWidth/2.0)],
+                [            0.0, -100.0 / 354, (self.svgHeight/2.0)]
+            ])
 
-    # TODO: center this thing
     def recursively_traverse_svg(self, node_list,
                                  mat_current = None,
                                  parent_visibility = 'visible'):
@@ -262,7 +274,7 @@ class SvgParser(object):
 
         if not mat_current:
             mat_current = [
-                [1.0, 0.0, 0.0],
+                [1.0,  0.0, 0.0],
                 [0.0, -1.0, 0.0]
             ]
 
