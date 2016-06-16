@@ -206,6 +206,7 @@ class SvgParser(object):
         'pattern': SvgIgnoredEntity,
         'metadata': SvgIgnoredEntity,
         'defs': SvgIgnoredEntity,
+        'desc': SvgIgnoredEntity,
         'eggbot': SvgIgnoredEntity,
         ('namedview', 'sodipodi'): SvgIgnoredEntity,
         'text': SvgText
