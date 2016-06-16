@@ -1,8 +1,3 @@
-class ShorterFloat(float):
-    """A float which returns only 3 digits after the decimal"""
-    def __repr__(self):
-        return "%0.3f" % self
-
 class OSCADPolyContext:
     def __init__(self, svg_file):
         self.file = svg_file
@@ -11,7 +6,6 @@ class OSCADPolyContext:
     def generate(self):
         # generate list of all modules at top for easy control by uncommenting
         for polygon in self.polygons:
-
             print "//{}();".format(polygon['id'])
 
         # generate actual modules from polygons
@@ -26,5 +20,5 @@ class OSCADPolyContext:
             print "    );"
 
     def add_poly(self, poly_id, points, paths):
-        shortened_points = [[ShorterFloat(x), ShorterFloat(y)] for x, y in points]
+        shortened_points = [[round(x, 3),round(y, 3)] for x, y in points]
         self.polygons.append({ 'id': poly_id, 'points':shortened_points, 'paths':paths})
