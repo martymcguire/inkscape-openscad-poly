@@ -22,7 +22,7 @@ from openscad_poly.svg_parser import SvgParser
 
 class MyEffect(inkex.Effect):
     def __init__(self):
-        super(MyEffect, self).__init__(self)
+        inkex.Effect.__init__(self)
         self.context = 'No context'
         self.OptionParser.add_option("--tab",
                                      action="store", type="string",
