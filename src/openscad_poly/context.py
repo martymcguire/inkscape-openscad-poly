@@ -9,13 +9,21 @@ class OSCADPolyContext:
         self.polygons = []
 
     def generate(self):
+        # generate list of all modules at top for easy control by uncommenting
         for polygon in self.polygons:
-            print "module %s() {" % polygon['id']
-            print "  polygon(points="
-            print("    " + str(polygon['points']))
-            print "    , paths="
-            print("    " + str(polygon['paths']))
-            print "    );}"
+
+            print "//{}();".format(polygon['id'])
+
+        # generate actual modules from polygons
+        for polygon in self.polygons:
+            print
+            print "module {}()".format(polygon['id'])
+            print "    polygon("
+            print "        points="
+            print "            {},".format(polygon['points'])
+            print "        paths="
+            print "            {}".format(polygon['paths'])
+            print "    );"
 
     def add_poly(self, poly_id, points, paths):
         shortened_points = [[ShorterFloat(x), ShorterFloat(y)] for x, y in points]
