@@ -12,6 +12,7 @@ class Path(Entity):
         self.segments = []
         self.points   = []
         self.paths    = []
+        self.color    = None
 
     def __str__(self):
         return "Polyline consisting of {} segments.".format(len(self.segments))
@@ -22,4 +23,4 @@ class Path(Entity):
         """
         context.add_poly(self.id,
                          [[round(n, 5) for n in p] for p in self.points],
-                         self.paths)
+                         self.paths, self.color)
