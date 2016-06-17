@@ -7,7 +7,12 @@ class OSCADPolyContext:
         # generate list of all modules at top for easy control
         for polygon in self.polygons:
             if polygon['color']:
-                print "color({}) {}();".format(polygon['color'], polygon['id'])
+                print "color([{:0.4f}, {:0.4f}, {:0.4f}, {:0.4f}]) {}();".format(
+                    polygon['color'][0],
+                    polygon['color'][1],
+                    polygon['color'][2],
+                    polygon['color'][3],
+                    polygon['id'])
             else:
                 print "{}();".format(polygon['id'])
 

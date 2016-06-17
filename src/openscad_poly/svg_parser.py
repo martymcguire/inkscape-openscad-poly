@@ -1,4 +1,4 @@
-import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv
+import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv, re
 from simpletransform import applyTransformToPath, parseTransform, composeTransform
 from bezmisc import beziersplitatt
 import entities
@@ -101,6 +101,41 @@ class SvgPath(entities.Path):
                     self.points.append(point)
                 path.append(self.points.index(point))
             self.paths.append(path)
+
+        # get color
+        style = node.get('style')
+        try:
+            hexcolor = re.search('fill:#([0-9a-fA-f]{6})', style).group(1)
+            rgb = [
+                int(hexcolor[0:2], 16),
+                int(hexcolor[2:4], 16),
+                int(hexcolor[4:6], 16)
+            ]
+        except (TypeError, AttributeError):
+            rgb = None
+
+        # get optional opacity
+        try:
+            opacity = float(re.search('(?:^|;)opacity:([0-9]*\.?[0-9]+)', style).group(1))
+        except (TypeError, AttributeError):
+            opacity = 1.0
+
+        # get optional fill-opacity (of course there is more than one way to set opacity of paths...)
+        try:
+            fill_opacity = float(re.search('(?:^|;)fill-opacity:([0-9]*\.?[0-9]+)', style).group(1))
+        except (TypeError, AttributeError):
+            fill_opacity = 1.0
+
+        if rgb:
+            self.color = [
+                rgb[0] / 255.0,
+                rgb[1] / 255.0,
+                rgb[2] / 255.0,
+                opacity * fill_opacity
+            ]
+        else:
+            self.color = None
+
 
     @staticmethod
     def new_path_from_node(node):
