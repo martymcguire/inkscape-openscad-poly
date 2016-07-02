@@ -1,17 +1,25 @@
-from math import cos, sin, radians
-import pprint
+class Entity(object):
+    def __init__(self):
+        pass
 
-class Entity:
-	def make_poly(self,context):
-		#raise NotImplementedError()
-		return "NIE"
+    def make_poly(self, context):
+        raise NotImplementedError()
 
 class Path(Entity):
-	def __str__(self):
-		return "Polyline consisting of %d segments." % len(self.segments)
+    def __init__(self):
+        super(Path, self).__init__()
+        self.id       = ''
+        self.segments = []
+        self.points   = []
+        self.paths    = []
 
-	def make_poly(self,context):
-		"Emit polygon dict with id, points, paths"
-		context.add_poly(self.id,
-                     [[round(n,5) for n in p] for p in self.points],
-                     self.paths)
+    def __str__(self):
+        return "Polyline consisting of {} segments.".format(len(self.segments))
+
+    def make_poly(self, context):
+        """
+        Emit polygon dict with id, points, paths
+        """
+        context.add_poly(self.id,
+                         [[round(n, 5) for n in p] for p in self.points],
+                         self.paths)
