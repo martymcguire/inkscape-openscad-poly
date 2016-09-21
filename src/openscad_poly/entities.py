@@ -1,3 +1,9 @@
+"""
+Contributors:
+Copyright (c) 2016 Benedict Endemann
+"""
+
+
 class Entity(object):
     def __init__(self):
         pass

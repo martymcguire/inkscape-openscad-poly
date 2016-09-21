@@ -1,3 +1,8 @@
+"""
+Contributors:
+Copyright (c) 2016 Benedict Endemann
+"""
+
 class OSCADPolyContext:
     def __init__(self, svg_file):
         self.file = svg_file

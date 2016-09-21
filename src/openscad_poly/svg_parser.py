@@ -1,3 +1,8 @@
+"""
+Contributors:
+Copyright (c) 2016 Benedict Endemann
+"""
+
 import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv, re
 from simpletransform import applyTransformToPath, parseTransform, composeTransform
 from bezmisc import beziersplitatt
