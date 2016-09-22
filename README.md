@@ -9,8 +9,8 @@ Website: [http://github.com/martymcguire/inkscape-openscad-poly](http://github.c
 
 Contributors
 ============
-[Marty McGuire](http://github.com/martymcguire)
-[Benedict Endemann](https://github.com/baxerus)
+* [Marty McGuire](http://github.com/martymcguire)
+* [Benedict Endemann](https://github.com/baxerus)
 
 Credits
 =======
@@ -51,6 +51,7 @@ Use in OpenSCAD
 
 You'll find each path from your Inkscape file appears as a `module` in the
 resulting OpenSCAD file.
+
 The resulting OpenSCAD also contains a list of every generated module at the beginning. This allows easy control of the generated polygons by simply previewing (with F5) in OpenSCAD and can be easily disabled by commenting out or deleting the lines. If the paths in the SVG file use simple basic colors (no color gradient) this color is transformed into an OpenSCAD color() statement. Unfortunately OpenSCAD uses color only in preview mode (F5) not in render mode (F6).
 
 For example:
