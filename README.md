@@ -5,9 +5,12 @@ This is an Inkscape extension that allows you to save your Inkscape drawings as
 OpenSCAD (.scad) files containing modules with 2D polygons suitable for
 extruding into 3D shapes.
 
-Author: [Marty McGuire](http://github.com/martymcguire)
-
 Website: [http://github.com/martymcguire/inkscape-openscad-poly](http://github.com/martymcguire/inkscape-openscad-poly)
+
+Contributors
+============
+[Marty McGuire](http://github.com/martymcguire)
+[Benedict Endemann](https://github.com/baxerus)
 
 Credits
 =======
@@ -48,6 +51,7 @@ Use in OpenSCAD
 
 You'll find each path from your Inkscape file appears as a `module` in the
 resulting OpenSCAD file.
+The resulting OpenSCAD also contains a list of every generated module at the beginning. This allows easy control of the generated polygons by simply previewing (with F5) in OpenSCAD and can be easily disabled by commenting out or deleting the lines. If the paths in the SVG file use simple basic colors (no color gradient) this color is transformed into an OpenSCAD color() statement. Unfortunately OpenSCAD uses color only in preview mode (F5) not in render mode (F6).
 
 For example:
 
@@ -72,6 +76,5 @@ TODOs
 
 * Use square and circle where applicable for simplicity?
 * Combine layer contents into single modules?
-* Apply fill colors to the polygon defs.
-* Parameterize smoothness for curve approximation.
+* Parameterize smoothness for curve approximation (dirty workaround: Scale up in inkscape and down in OpenSCAD).
 * Include example files/templates.
