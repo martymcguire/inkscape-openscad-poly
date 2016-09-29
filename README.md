@@ -79,3 +79,7 @@ TODOs
 * Combine layer contents into single modules?
 * Parameterize smoothness for curve approximation (dirty workaround: Scale up in inkscape and down in OpenSCAD).
 * Include example files/templates.
+
+Special attribution notes
+=========================
+* File: test_svgs/3-Pointer_Altimeter.svg from [Wikimedia Commons](https://en.wikipedia.org/wiki/File:3-Pointer_Altimeter.svg) under _puplic domain_
