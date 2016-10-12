@@ -1,4 +1,9 @@
-import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv
+"""
+Contributors:
+Copyright (c) 2016 Benedict Endemann
+"""
+
+import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv, re
 from simpletransform import applyTransformToPath, parseTransform, composeTransform
 from bezmisc import beziersplitatt
 import entities
@@ -7,7 +12,8 @@ def parse_length_with_units(string):
     """
     Parse an SVG value which may or may not have units attached
     This version is greatly simplified in that it only allows: no units,
-    units of px, and units of %.  Everything else, it returns None for.
+    units of px, units of mm, and units of %.  Everything else,
+    it returns None for.
     There is a more general routine to consider in scour.py if more
     generality is ever needed.
     """
@@ -15,6 +21,9 @@ def parse_length_with_units(string):
     u = 'px'
     s = string.strip()
     if s[-2:] == 'px':
+        s = s[:-2]
+    elif s[-2:] == 'mm':
+        u = 'mm'
         s = s[:-2]
     elif s[-1:] == '%':
         u = '%'
@@ -72,6 +81,7 @@ class SvgIgnoredEntity(entities.Path):
         return "Ignored '%s' tag" % self.tag
 
     def make_poly(self, context):
+        # Entity should be ignored, so return nothing
         return
 
 class SvgPath(entities.Path):
@@ -96,6 +106,41 @@ class SvgPath(entities.Path):
                     self.points.append(point)
                 path.append(self.points.index(point))
             self.paths.append(path)
+
+        # get color
+        style = node.get('style')
+        try:
+            hexcolor = re.search('fill:#([0-9a-fA-f]{6})', style).group(1)
+            rgb = [
+                int(hexcolor[0:2], 16),
+                int(hexcolor[2:4], 16),
+                int(hexcolor[4:6], 16)
+            ]
+        except (TypeError, AttributeError):
+            rgb = None
+
+        # get optional opacity
+        try:
+            opacity = float(re.search('(?:^|;)opacity:([0-9]*\.?[0-9]+)', style).group(1))
+        except (TypeError, AttributeError):
+            opacity = 1.0
+
+        # get optional fill-opacity (of course there is more than one way to set opacity of paths...)
+        try:
+            fill_opacity = float(re.search('(?:^|;)fill-opacity:([0-9]*\.?[0-9]+)', style).group(1))
+        except (TypeError, AttributeError):
+            fill_opacity = 1.0
+
+        if rgb:
+            self.color = [
+                rgb[0] / 255.0,
+                rgb[1] / 255.0,
+                rgb[2] / 255.0,
+                opacity * fill_opacity
+            ]
+        else:
+            self.color = None
+
 
     @staticmethod
     def new_path_from_node(node):
@@ -201,6 +246,7 @@ class SvgParser(object):
         'pattern': SvgIgnoredEntity,
         'metadata': SvgIgnoredEntity,
         'defs': SvgIgnoredEntity,
+        'desc': SvgIgnoredEntity,
         'eggbot': SvgIgnoredEntity,
         ('namedview', 'sodipodi'): SvgIgnoredEntity,
         'text': SvgText
@@ -212,37 +258,67 @@ class SvgParser(object):
         self.entities = []
         self.svgWidth = 0.0
         self.svgHeight = 0.0
+        self.widthFactor  = 1.0
+        self.heightFactor = 1.0
 
-    def get_length(self, name, default):
+    def get_length(self, name, default = 354.0):
         """
         Get the <svg> attribute with name "name" and default value "default"
-        Parse the attribute into a value and associated units.  Then, accept
-        no units (''), units of pixels ('px'), and units of percentage ('%').
+        Parse the attribute into a value and associated units. Then, accept
+        no units (''), units of pixels ('px'), units of millimeter ('mm'),
+        and units of percentage ('%').
+
+        return length and factor for the named dimension
         """
+
         string = self.svg.get( name )
+
         if string:
             v, u = parse_length_with_units(string)
             if not v:
                 # Couldn't parse the value
                 return None
+
             elif ( u == '' ) or ( u == 'px' ):
-                return v
+                return [
+                    v / default * 100.0,
+                    100.0 / default
+                ]
+
+            elif u == 'mm':
+                return [
+                    v,
+                    100.0 / default
+                ]
+
             elif u == '%':
-                return float( default ) * v / 100.0
+                # we do not know how big the viewport in pixels is (without iterating over every path TODO).
+                # So we can't deliver the length and set it to "0" instead, so viewport starts at 0,0 in OpenSCAD
+                return [
+                    0,
+                    v / 100.0
+                ]
+
             else:
                 # Unsupported units
                 return None
         else:
-            # No width specified; assume the default value
-            return float( default )
+            # Not specified; assume the default value
+            return [
+                default,
+                100.0 / default
+            ]
 
     def parse(self):
-        # 0.28222 scale determined by comparing pixels-per-mm in a default Inkscape file.
-        self.svgWidth = self.get_length('width', 354) * 0.28222
-        self.svgHeight = self.get_length('height', 354) * 0.28222
-        self.recursively_traverse_svg(self.svg, [[0.28222, 0.0, -(self.svgWidth / 2.0)], [0.0, -0.28222, (self.svgHeight / 2.0)]])
+        [self.svgWidth,   self.widthFactor] = self.get_length('width')
+        [self.svgHeight, self.heightFactor] = self.get_length('height')
 
-    # TODO: center this thing
+        self.recursively_traverse_svg(self.svg,
+            [
+                [self.widthFactor,               0.0, -(self.svgWidth/2.0)],
+                [            0.0, -self.heightFactor, (self.svgHeight/2.0)]
+            ])
+
     def recursively_traverse_svg(self, node_list,
                                  mat_current = None,
                                  parent_visibility = 'visible'):
@@ -262,7 +338,7 @@ class SvgParser(object):
 
         if not mat_current:
             mat_current = [
-                [1.0, 0.0, 0.0],
+                [1.0,  0.0, 0.0],
                 [0.0, -1.0, 0.0]
             ]
 
