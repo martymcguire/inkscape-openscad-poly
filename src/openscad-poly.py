@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Contributors:
 Copyright (c) 2016 Benedict Endemann
+Copyright (c) 2011 Marty McGuire
 """
 import inkex
 from openscad_poly.context import OSCADPolyContext

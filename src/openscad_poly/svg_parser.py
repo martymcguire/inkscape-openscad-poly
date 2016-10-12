@@ -1,6 +1,7 @@
 """
 Contributors:
 Copyright (c) 2016 Benedict Endemann
+Copyright (c) 2011 Marty McGuire
 """
 
 import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv, re
