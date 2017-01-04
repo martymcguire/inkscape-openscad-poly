@@ -82,4 +82,4 @@ TODOs
 
 Special attribution notes
 =========================
-* File: test_svgs/3-Pointer_Altimeter.svg from [Wikimedia Commons](https://en.wikipedia.org/wiki/File:3-Pointer_Altimeter.svg) under _puplic domain_
+* File: test_svgs/3-Pointer_Altimeter.svg from [Wikimedia Commons](https://en.wikipedia.org/wiki/File:3-Pointer_Altimeter.svg) under _public domain_
