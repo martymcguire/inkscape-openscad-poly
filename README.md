@@ -26,9 +26,12 @@ Install
 
 Copy the contents of `src/` to your Inkscape `extensions/` folder.
 
-Typical locations include:
+To find this folder you will need to check the instructions for your specific operating system and Inkscape installation type.
+
+An incomplete list of possible locations by platform:
 
 * OS X - `/Applications/Inkscape.app/Contents/Resources/extensions`
+    * MacPorts (as required by [some newer versions of Inkscape](https://inkscape.org/release/inkscape-0.92.4/mac-os-x/macports/dl/)) has a different extensions folder. For example: `/opt/local/share/inkscape/extensions`.
 * Linux - `/usr/share/inkscape/extensions`
 * Windows - `C:\Program Files\Inkscape\share\extensions`
 
