@@ -7,7 +7,7 @@ Copyright (c) 2011 Marty McGuire
 import inkex, cubicsuperpath, simplepath, simplestyle, cspsubdiv, re
 from simpletransform import applyTransformToPath, parseTransform, composeTransform
 from bezmisc import beziersplitatt
-import entities
+import openscad_poly.entities as entities
 
 def parse_length_with_units(string):
     """
@@ -376,7 +376,7 @@ class SvgParser(object):
                         pass
                 else:
                     pass
-            elif not isinstance(node.tag, basestring):
+            elif not isinstance(node.tag, str):
                 pass
             else:
                 entity = self.make_entity(node, mat_new)
