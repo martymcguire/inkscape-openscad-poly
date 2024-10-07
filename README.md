@@ -1,6 +1,13 @@
 OpenSCAD Polygon Output for Inkscape
 ====================================
 
+Notice
+------
+
+**This extension is no longer supported or maintained. The last tested version of Inkscape is 0.48.5.**
+
+**Please feel free to fork and improve this extension for your own needs!**
+
 This is an Inkscape extension that allows you to save your Inkscape drawings as
 OpenSCAD (.scad) files containing modules with 2D polygons suitable for
 extruding into 3D shapes.
